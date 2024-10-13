@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta name="robots" content="index, all" />
+    <script src="https://www.webglearth.com/v2/api.js"></script>
+    <title>WebGL Earth API - Advanced API demo</title>
+    <meta name="description" content="Free and open-source 3D digital globe for web and mobile devices. This example shows how to zoom to a certain zoom level, get the info about the zoom level, set position to a place, use the fly-to function, and add markers & polygons.">
+<style>
+    #chartdiv {
+      width: 100%;
+      height: 500px;
+      max-width: 100%;
+    }
+    </style>
+    
+  </head>
+  <body style="color: black;">
+   
+    <div id="chartdiv" style="color: black; min-height: 100vh;"></div>
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Dark.js"></script>
+<script>
+    am5.ready(function() {
+    
+    // Create root element
+    // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+    var root = am5.Root.new("chartdiv");
+    
+    
+    // Set themes
+    // https://www.amcharts.com/docs/v5/concepts/themes/
+    root.setThemes([
+      am5themes_Animated.new(root),
+    //   am5themes_Dark.new(root)
+    ]);
+    
+    
+    // Create the map chart
+    // https://www.amcharts.com/docs/v5/charts/map-chart/
+    var chart = root.container.children.push(am5map.MapChart.new(root, {
+      panX: "rotateX",
+      panY: "rotateY",
+      projection: am5map.geoOrthographic(),
+      paddingBottom: 20,
+      paddingTop: 20,
+      paddingLeft: 20,
+      paddingRight: 20
+    }));
+
+    
+    
+    
+    // Create main polygon series for countries
+    // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
+    var polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+      geoJSON: am5geodata_worldLow
+    }));
+
+    polygonSeries.mapPolygons.template.setAll({
+  tooltipText: "{name}",
+  fill: am5.color(0x1d7b7100), // Change the fill color
+  stroke: am5.color(0x000000), // Change the stroke color
+  strokeWidth: 1, // Change the stroke width
+});
+    
+    // polygonSeries.mapPolygons.template.setAll({
+    //   tooltipText: "{name}",
+    //   toggleKey: "active",
+    //   interactive: true
+    // });
+    
+    polygonSeries.mapPolygons.template.states.create("hover", {
+      fill: root.interfaceColors.get("primaryButtonHover")
+    });
+    
+    // Create series for background fill
+    // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/#Background_polygon
+    var backgroundSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {}));
+    backgroundSeries.mapPolygons.template.setAll({
+      fill: root.interfaceColors.get("blue"),
+      fillOpacity: 0.1,
+      strokeOpacity: 1
+    });
+    backgroundSeries.data.push({
+      geometry: am5map.getGeoRectangle(90, 180, -90, -180)
+    });
+    
+    
+    // Create graticule series
+    // https://www.amcharts.com/docs/v5/charts/map-chart/graticule-series/
+    var graticuleSeries = chart.series.push(am5map.GraticuleSeries.new(root, {}));
+    graticuleSeries.mapLines.template.setAll({ strokeOpacity: 0.1, stroke: root.interfaceColors.get("alternativeBackground") })
+    
+    
+    // Rotate animation
+    // chart.animate({
+    //   key: "rotationX",
+    //   from: 0,
+    //   to: 360,
+    //   duration: 30000,
+    //   loops: Infinity
+    // });
+    
+    
+    // Make stuff animate on load
+    chart.appear(1000, 100);
+    
+    }); // end am5.ready()
+    </script>
+    
+  </body>
+</html>
